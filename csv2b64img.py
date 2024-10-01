@@ -29,33 +29,33 @@ def try_parse_int(arg: str):
   except ValueError:
     return None
 
-valores = sys.stdin.read() if (len(sys.argv) < 2) else sys.argv[1]
-linhas = valores.split(SEPARADOR_ENTRE_LINHAS)
-TAMANHO_COLUNAS_RELATORIO = [0] * len(linhas[0].split(SEPARADOR_ENTRE_COLUNAS))
-DESTACAR_LINHAS = linhas[0].startswith('#')
-QUANTIDADE_LINHAS_RELATORIO = 0
-
-for i, linha in enumerate(linhas):
-  if not linha:
-    continue
-  QUANTIDADE_LINHAS_RELATORIO += 1
-  colunas = linha.split(SEPARADOR_ENTRE_COLUNAS)
-  for j, coluna in enumerate(colunas):
-    if DESTACAR_LINHAS and j == 0:
+def generate_image_from_csv(csv_data: str) -> str:
+  """Generate base64 image string from CSV-like input"""
+  linhas = csv_data.split(SEPARADOR_ENTRE_LINHAS)
+  if not linhas or len(linhas[0].strip()) == 0:
+    raise ValueError("Invalid CSV input.")
+  tamanho_colunas_relatorio = [0] * len(linhas[0].split(SEPARADOR_ENTRE_COLUNAS))
+  destacar_linhas = linhas[0].startswith('#')
+  quantidade_linhas_relatorio = 0
+  for i, linha in enumerate(linhas):
+    if not linha:
       continue
-    if len(coluna) >= TAMANHO_COLUNAS_RELATORIO[j]:
-      TAMANHO_COLUNAS_RELATORIO[j] = len(coluna) + 1
-
-# TAMANHO_COLUNAS_RELATORIO = [x + 2 for x in TAMANHO_COLUNAS_RELATORIO]
-CARACTERES_TOTAL = sum(TAMANHO_COLUNAS_RELATORIO)
-LARGURA_TOTAL_IMAGEM = CARACTERES_TOTAL * LARGURA_CARACTERE
-ALTURA_TOTAL_IMAGEM = QUANTIDADE_LINHAS_RELATORIO * ALTURA_CARACTERE
-
-try:
+    quantidade_linhas_relatorio += 1
+    colunas = linha.split(SEPARADOR_ENTRE_COLUNAS)
+    for j, coluna in enumerate(colunas):
+      if destacar_linhas and j == 0:
+        continue
+      if len(coluna) >= tamanho_colunas_relatorio[j]:
+        tamanho_colunas_relatorio[j] = len(coluna) + 1
+  # tamanho_colunas_relatorio = [x + 2 for x in tamanho_colunas_relatorio]
+  caracteres_total = sum(tamanho_colunas_relatorio)
+  largura_total_imagem = caracteres_total * LARGURA_CARACTERE
+  altura_total_imagem = quantidade_linhas_relatorio * ALTURA_CARACTERE
+  # Generate the image
   with Drawing() as draw:
     with Image(
-      width = LARGURA_TOTAL_IMAGEM,
-      height = ALTURA_TOTAL_IMAGEM,
+      width = largura_total_imagem,
+      height = altura_total_imagem,
       background = Color(CORES[0])
       ) as img:
       draw.font_family = 'Consolas'
@@ -67,7 +67,7 @@ try:
           continue
         colunas = linha.split(SEPARADOR_ENTRE_COLUNAS)
         for j, coluna in enumerate(colunas):
-          if DESTACAR_LINHAS and j == 0:
+          if destacar_linhas and j == 0:
             if i == 0:
               continue
             cor = try_parse_int(coluna)
@@ -77,7 +77,7 @@ try:
               draw.fill_color = Color(CORES[cor])
               draw.rectangle(
                 left = 0,
-                right = LARGURA_TOTAL_IMAGEM,
+                right = largura_total_imagem,
                 top = top_margin,
                 bottom = botton_margin)
               draw.fill_color = Color(CORES[1])
@@ -89,13 +89,22 @@ try:
                   y = ((i + 1) * ALTURA_CARACTERE),
                   body = letra)
                 cursor += LARGURA_CARACTERE
-          cursor = sum(TAMANHO_COLUNAS_RELATORIO[:j + 1]) * LARGURA_CARACTERE
+          cursor = sum(tamanho_colunas_relatorio[:j + 1]) * LARGURA_CARACTERE
       draw(img)
       img_bytes = img.make_blob(format='png')
       if not img_bytes:
         raise Exception()
       img_base64 = base64.b64encode(img_bytes).decode('utf-8')
-      print(img_base64)
-except Exception as erro:
-  print('500: Image cannot be generated')
-  print(erro.args[0])
+      return img_base64
+
+def main():
+  """Main function to handle command line input and output"""
+  valores = sys.stdin.read() if (len(sys.argv) < 2) else sys.argv[1]
+  try:
+    img_base64 = generate_image_from_csv(valores)
+    print(img_base64)
+  except:
+    print('500: Image cannot be generated')
+
+if __name__ == '__main__':
+  main()
