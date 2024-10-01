@@ -70,8 +70,6 @@ jobs:
         run: |
           (Get-Content "$GITHUB_WORKSPACE/version-file.txt") -replace '\$([A-Z_]+)', { Get-Item env:\$matches[1] } | Set-Content "$RUNNER_TEMP/version-file.txt"
           cat "$RUNNER_TEMP/RELEASE_NOTE"
-        outputs:
-          note: $RUNNER_TEMP/RELEASE_NOTE
       # Create a release on GitHub
       - name: Create Release
         id: create_release
