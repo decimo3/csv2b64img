@@ -6,7 +6,7 @@ from csv2b64img import main
 def test_image_generation_with_valid_input(monkeypatch, capsys):
   """ Test the script with a valid csv input """
   # Mock the input: simulate CSV-like input as a string
-  mock_csv_input = "Name,Age,Color\nJohn,25,1\nDoe,30,2"
+  mock_csv_input = 'Name,Age,Color\nJohn,25,1\nDoe,30,2'
   # Mock stdin with the CSV input
   monkeypatch.setattr('sys.stdin', StringIO(mock_csv_input))
   # Mock sys.argv if your script needs it
@@ -23,7 +23,7 @@ def test_image_generation_with_valid_input(monkeypatch, capsys):
 def test_image_generation_with_invalid_input(monkeypatch, capsys):
   """ Test the script with a invalid csv input """
   # Mock the input: simulate an empty CSV-like input
-  mock_csv_input = ""
+  mock_csv_input = ''
   # Mock stdin with the CSV input
   monkeypatch.setattr('sys.stdin', StringIO(mock_csv_input))
   # Mock sys.argv if your script needs it
