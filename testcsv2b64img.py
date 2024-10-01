@@ -34,4 +34,4 @@ def test_image_generation_with_invalid_input(monkeypatch, capsys):
   captured = capsys.readouterr()
   # Ensure the error message is printed
   output = captured.out.strip()
-  assert "500: Image cannot be generated" in output
+  assert '400: Input is not a valid CSV data' in output
