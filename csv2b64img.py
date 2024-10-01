@@ -31,7 +31,6 @@ class Propriedades(NamedTuple):
   destacar: bool
   quantidades: int
   tamanhos: list[int]
-  caracteres: int
   largura: int
   altura: int
 
@@ -46,18 +45,21 @@ def get_csv_definitions(csv_data: str) -> Propriedades:
   """ Method to get Propriedades of csv data """
   if len(csv_data.strip()) == 0:
     raise ValueError("Invalid CSV input.")
-  propriedades = Propriedades()
-  propriedades.destacar = csv_data.startswith('#')
+  destacar = csv_data.startswith('#')
   linhas = csv_data.split(SEPARADOR_ENTRE_LINHAS)
-  propriedades.quantidades = sum(len(x.strip()) > 0 for x in linhas)
-  propriedades.tamanhos = [0 for x in linhas[0].split(SEPARADOR_ENTRE_COLUNAS)]
+  quantidades = sum(len(x.strip()) > 0 for x in linhas)
+  tamanhos = [0 for x in linhas[0].split(SEPARADOR_ENTRE_COLUNAS)]
   for linha in linhas:
     colunas = linha.strip().split(SEPARADOR_ENTRE_COLUNAS)
     tamanhos_colunas = [len(x) for x in colunas]
-    propriedades.tamanhos = get_greatest_elements(tamanhos_colunas, propriedades.tamanhos)
-  propriedades.caracteres = sum(propriedades.tamanhos)
-  propriedades.largura = propriedades.caracteres * LARGURA_CARACTERE
-  propriedades.altura = propriedades.quantidades * ALTURA_CARACTERE
+    tamanhos = get_greatest_elements(tamanhos_colunas, tamanhos)
+  propriedades = Propriedades(
+    destacar=destacar,
+    tamanhos=tamanhos,
+    quantidades=quantidades,
+    altura= quantidades * ALTURA_CARACTERE,
+    largura= sum(tamanhos) * LARGURA_CARACTERE
+    )
   return propriedades
 
 def try_parse_int(arg: str):
