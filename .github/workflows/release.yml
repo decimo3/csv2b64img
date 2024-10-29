@@ -12,11 +12,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Get major, minor and patch version
-        if: startsWith(github.ref, 'refs/tags/')
-        id: build
         run: |
-          # Remove the 'v' prefix and split the version string into components
-          version="${GITHUB_REF#refs/tags/v}"
+          # Check if the workflow is triggered by a tag; if not, get the latest tag
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            # Remove the 'v' prefix and split the version string into components
+            version="${GITHUB_REF#refs/tags/v}"
+          else
+            # Fetch tags and get the latest one
+            git fetch --tags
+            version=$(git describe --tags $(git rev-list --tags --max-count=1))
+            version="${version#v}"  # Remove 'v' prefix if the tag has it
+          fi
+
           echo "Version: $version"
           # Extract major, minor, and patch versions
           IFS='.' read -r major minor patch <<< "$version"
