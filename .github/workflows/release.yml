@@ -88,7 +88,7 @@ jobs:
       # Build executable
       - name: Build with pyinstaller
         run: |
-          pyinstaller --onefile csv2b64img.py --version_file="version_file.txt"
+          pyinstaller --onefile csv2b64img.py --version-file="version_file.txt"
       # Compress executable
       - name: compress executable
         run: |
