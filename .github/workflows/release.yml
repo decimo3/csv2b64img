@@ -41,13 +41,13 @@ jobs:
       - name: Write version file
         id: version_file
         run: |
-          envsubst < version_file.txt > version_file.txt
+          envsubst < version_file.txt > version_file.tmp && mv version_file.tmp version_file.txt
           cat version_file.txt
       # Create release notes
       - name: Create release notes
         id: release_note
         run: |
-          envsubst < release_notes.md > release_notes.md
+          envsubst < release_notes.md > release_notes.tmp && mv release_notes.tmp release_notes.md
           cat release_notes.md
       - name: Upload files as artifact
         uses: actions/upload-artifact@v4
