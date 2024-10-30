@@ -149,5 +149,5 @@ jobs:
       - name: Create Release
         run: |
           # Export variables for gh cli
-          export "TAG_NAME=${{ needs.setup.outputs.VERSION }}"
+          export "TAG_NAME=v${{ needs.setup.outputs.VERSION }}"
           gh release create $TAG_NAME --verify-tag --notes-file release_notes.md --title "CSV2B64IMG release" dist/csv2b64img.zip#csv2b64img.zip dist/csv2b64img.zip.sha256sum#csv2b64img.zip.sha256sum
