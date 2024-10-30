@@ -29,14 +29,14 @@ jobs:
           echo "Version: $version"
           # Extract major, minor, and patch versions
           IFS='.' read -r major minor patch <<< "$version"
-          # Output the results
-          echo "Major version: $major"
-          echo "Minor version: $minor"
-          echo "Patch version: $patch"
           # Set these as environment variables
-          echo "MAJOR_VERSION=$major" >> $GITHUB_ENV
-          echo "MINOR_VERSION=$minor" >> $GITHUB_ENV
-          echo "PATCH_VERSION=$patch" >> $GITHUB_ENV
+          export MAJOR_VERSION=$major
+          export MINOR_VERSION=$minor
+          export PATCH_VERSION=$patch
+          # Output the results
+          echo "Major version: $MAJOR_VERSION"
+          echo "Minor version: $MINOR_VERSION"
+          echo "Patch version: $PATCH_VERSION"
       # Write version file
       - name: Write version file
         id: version_file
