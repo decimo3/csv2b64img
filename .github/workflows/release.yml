@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Install dependencies
+        run: apt update && apt install -y gettext-base
       - name: Get major, minor and patch version
         run: |
           # Check if the workflow is triggered by a tag; if not, get the latest tag
