@@ -33,16 +33,23 @@ jobs:
           echo "Major version: $MAJOR_VERSION"
           echo "Minor version: $MINOR_VERSION"
           echo "Patch version: $PATCH_VERSION"
+          echo "MAJOR_VERSION=$MAJOR_VERSION" >> $GITHUB_ENV
+          echo "MINOR_VERSION=$MINOR_VERSION" >> $GITHUB_ENV
+          echo "PATCH_VERSION=$PATCH_VERSION" >> $GITHUB_ENV
       # Write version file
       - name: Write version file
         id: version_file
         run: |
+          # Export variables for envsubst
+          export MAJOR_VERSION MINOR_VERSION PATCH_VERSION
           envsubst < version_file.txt > version_file.tmp && mv version_file.tmp version_file.txt
           cat version_file.txt
       # Create release notes
       - name: Create release notes
         id: release_note
         run: |
+          # Export variables for envsubst
+          export MAJOR_VERSION MINOR_VERSION PATCH_VERSION
           envsubst < release_notes.md > release_notes.tmp && mv release_notes.tmp release_notes.md
           cat release_notes.md
       - name: Upload files as artifact
