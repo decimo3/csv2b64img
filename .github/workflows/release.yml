@@ -28,11 +28,7 @@ jobs:
 
           echo "Version: $version"
           # Extract major, minor, and patch versions
-          IFS='.' read -r major minor patch <<< "$version"
-          # Set these as environment variables
-          export MAJOR_VERSION=$major
-          export MINOR_VERSION=$minor
-          export PATCH_VERSION=$patch
+          IFS='.' read -r MAJOR_VERSION MINOR_VERSION PATCH_VERSION <<< "$version"
           # Output the results
           echo "Major version: $MAJOR_VERSION"
           echo "Minor version: $MINOR_VERSION"
