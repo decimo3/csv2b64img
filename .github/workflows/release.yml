@@ -68,9 +68,6 @@ jobs:
           name: docfiles
           overwrite: true
           if-no-files-found: error
-          path: |
-            version_file.txt
-            release_notes.md
       - name: Set up Python 3.10
         uses: actions/setup-python@v3
         with:
