@@ -2,6 +2,7 @@
 """ Module that convert csv table on base64 image string """
 # coding: utf8
 #region import
+import os
 import sys
 import base64
 from typing import NamedTuple
@@ -10,17 +11,17 @@ from wand.drawing import Drawing
 from wand.color import Color
 #endregion import
 
-SEPARADOR_ENTRE_COLUNAS = ','
-SEPARADOR_ENTRE_LINHAS = '\n'
+SEPARADOR_ENTRE_COLUNAS = ';'
+SEPARADOR_ENTRE_LINHAS = os.linesep
 LARGURA_CARACTERE = 13
 ALTURA_CARACTERE = 20
-# CORES: branco, preto, vermelho, amarelo, verde
+# CORES: branco, amarelo, vermelho, verde, preto
 CORES = [
   'rgb(255,255,255)',
-  'rgb(0,0,0)',
-  'rgb(255,128,128)',
   'rgb(255,255,128)',
-  'rgb(128,255,128)'
+  'rgb(255,128,128)',
+  'rgb(128,255,128)',
+  'rgb(0,0,0)'
 ]
 
 class ImageCannotBeGenerateError(BaseException):
@@ -53,6 +54,7 @@ def get_csv_definitions(csv_data: str) -> Propriedades:
     colunas = linha.strip().split(SEPARADOR_ENTRE_COLUNAS)
     tamanhos_colunas = [len(x) for x in colunas]
     tamanhos = get_greatest_elements(tamanhos_colunas, tamanhos)
+  tamanhos = [x + 1 for x in tamanhos]
   propriedades = Propriedades(
     destacar=destacar,
     tamanhos=tamanhos,
@@ -102,7 +104,7 @@ def generate_image_from_csv(csv_data: str) -> str:
                 right = propriedades.largura,
                 top = (i * ALTURA_CARACTERE) + 1,
                 bottom = (i * ALTURA_CARACTERE) + ALTURA_CARACTERE + 1)
-              draw.fill_color = Color(CORES[1])
+              draw.fill_color = Color(CORES[-1])
           else:
             if coluna:
               for letra in coluna:
