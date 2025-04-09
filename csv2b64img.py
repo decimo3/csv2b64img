@@ -15,6 +15,7 @@ SEPARADOR_ENTRE_COLUNAS = ';'
 SEPARADOR_ENTRE_LINHAS = os.linesep
 LARGURA_CARACTERE = 13
 ALTURA_CARACTERE = 20
+PROPORCAO_MAXIMA = 19
 # CORES: branco, amarelo, vermelho, verde, preto
 CORES = [
   'rgb(255,255,255)',
@@ -30,10 +31,11 @@ class ImageCannotBeGenerateError(BaseException):
 class Propriedades(NamedTuple):
   """ class to hold some values """
   destacar: bool
-  quantidades: int
+  quantidade: int
   tamanhos: list[int]
   largura: int
   altura: int
+  preenchimento: int
 
 def get_greatest_elements(vec1, vec2) -> list[int]:
   """ Function to get the greatest elements """
@@ -44,32 +46,37 @@ def get_greatest_elements(vec1, vec2) -> list[int]:
 
 def get_csv_definitions(csv_data: str) -> Propriedades:
   """ Method to get Propriedades of csv data """
-  if len(csv_data.strip()) == 0:
+  if not csv_data.strip():
     raise ValueError("Invalid CSV input.")
   destacar = csv_data.startswith('#')
-  linhas = csv_data.split(SEPARADOR_ENTRE_LINHAS)
-  quantidades = sum(len(x.strip()) > 0 for x in linhas)
-  tamanhos = [0 for x in linhas[0].split(SEPARADOR_ENTRE_COLUNAS)]
+  linhas = csv_data.strip().split(SEPARADOR_ENTRE_LINHAS)
+  quantidade = sum(len(x.strip()) > 0 for x in linhas)
+  tamanhos = [0] * len(linhas[0].split(SEPARADOR_ENTRE_COLUNAS))
   for linha in linhas:
     colunas = linha.strip().split(SEPARADOR_ENTRE_COLUNAS)
     tamanhos_colunas = [len(x) for x in colunas]
     tamanhos = get_greatest_elements(tamanhos_colunas, tamanhos)
   tamanhos = [x + 1 for x in tamanhos]
-  propriedades = Propriedades(
+  largura = sum(tamanhos) * LARGURA_CARACTERE
+  altura = quantidade * ALTURA_CARACTERE
+  proporcao = largura / altura
+  preenchimento = int(altura * (proporcao // PROPORCAO_MAXIMA))
+  altura += preenchimento
+  return Propriedades(
     destacar=destacar,
     tamanhos=tamanhos,
-    quantidades=quantidades,
-    altura= quantidades * ALTURA_CARACTERE,
-    largura= sum(tamanhos) * LARGURA_CARACTERE
-    )
-  return propriedades
+    quantidade=quantidade,
+    altura=altura,
+    largura=largura,
+    preenchimento=preenchimento
+  )
 
-def try_parse_int(arg: str):
+def try_parse_int(arg: str) -> int:
   """ Get int value from str """
   try:
     return int(arg)
   except ValueError:
-    return None
+    return 0
 
 def generate_image_from_csv(csv_data: str) -> str:
   """Generate base64 image string from CSV-like input"""
